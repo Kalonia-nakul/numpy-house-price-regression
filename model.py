@@ -119,8 +119,12 @@ def subset_xy(X, y, indices):
     idx = np.asarray(indices)        # idx: new local variable, no clash with the parameter
     return np.asarray(X)[idx], np.asarray(y)[idx]
 
-# Step 13 - ols_fit (not yet solved)
-# TODO: implement
+# Step 13 - ols_fit
+def ols_fit(X, y):
+    X = np.asarray(X, dtype=float)                 
+    y = np.asarray(y, dtype=float)                   
+    w, *_ = np.linalg.lstsq(X, y, rcond=None)        
+    return w
 
 # Step 14 - ols_predict (not yet solved)
 # TODO: implement
