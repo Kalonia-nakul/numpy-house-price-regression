@@ -104,12 +104,10 @@ def make_shuffled_indices(n_samples, seed):
 
 # Step 11 - partition_indices
 def partition_indices(indices, train_ratio, val_ratio):
-    # TODO: Split a shuffled index array into train, validation, and test index arrays.
     indices = np.asarray(indices)              
     N = len(indices)                           
     n_train = int(train_ratio * N)              
     n_val = int(val_ratio * N)                  
-
     train_idx = indices[:n_train]
     val_idx = indices[n_train:n_train + n_val]
     test_idx = indices[n_train + n_val:]        
