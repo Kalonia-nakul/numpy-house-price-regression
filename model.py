@@ -179,8 +179,35 @@ def residual_summary(y_true, y_pred):
         'median_abs': float(np.median(np.abs(r))),  # median absolute residual
     }
 
-# Step 19 - prepare_cleaned_features (not yet solved)
-# TODO: implement
+# Step 19 - prepare_cleaned_features
+def prepare_cleaned_features(X, iqr_k=1.5):
+    """Impute NaNs then IQR-clip columns to produce a clean numeric matrix.
+
+    Args:
+        X: (N, F) array-like of floats, may contain NaN.
+        iqr_k: IQR multiplier passed to compute_iqr_bounds (default 1.5).
+
+    Returns:
+        (N, F) float ndarray with no NaNs, columns clipped to IQR bounds.
+    """
+    # TODO: Produce a clean numeric matrix via impute then IQR clip
+    X = np.array(X, dtype=float)                      # X: (N, F) copy, input not modified
+
+    # Step 1: impute NaN with column mean (all-NaN column -> 0)
+    counts = np.sum(~np.isnan(X), axis=0)             # counts: (F,) non-NaN count per column
+    sums = np.nansum(X, axis=0)                       # sums: (F,) sum of non-NaN per column
+    means = np.divide(sums, counts, out=np.zeros_like(sums), where=counts > 0)  # means: (F,) mu_j
+    rows, cols = np.where(np.isnan(X))                # positions of NaNs
+    X[rows, cols] = means[cols]                       # fill each NaN with its column mean
+
+    # Step 2: IQR bounds per column, from the imputed data
+    q1, q3 = np.percentile(X, [25, 75], axis=0)       # q1, q3: (F,) quartiles
+    iqr = q3 - q1                                     # iqr: (F,) spread
+    lower = q1 - iqr_k * iqr                          # lower: (F,) l_j
+    upper = q3 + iqr_k * iqr                          # upper: (F,) u_j
+
+    # Step 3: clip each column to its own bounds
+    return np.clip(X, lower, upper)
 
 # Step 20 - assemble_feature_matrix (not yet solved)
 # TODO: implement
