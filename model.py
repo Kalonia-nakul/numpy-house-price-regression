@@ -166,8 +166,18 @@ def r_squared(y_true, y_pred):
         return 0.0
     return float(1 - ss_res / ss_tot)
 
-# Step 18 - residual_summary (not yet solved)
-# TODO: implement
+# Step 18 - residual_summary
+def residual_summary(y_true, y_pred):
+    # TODO: Return a compact dict summarizing prediction residuals...
+    y_true = np.asarray(y_true, dtype=float)    # y_true: (N,) true targets
+    y_pred = np.asarray(y_pred, dtype=float)    # y_pred: (N,) predictions
+    r = y_true - y_pred                         # r: (N,) residuals
+
+    return {
+        'mean': float(np.mean(r)),                  # average residual (bias)
+        'std': float(np.std(r)),                    # population std (divides by N)
+        'median_abs': float(np.median(np.abs(r))),  # median absolute residual
+    }
 
 # Step 19 - prepare_cleaned_features (not yet solved)
 # TODO: implement
