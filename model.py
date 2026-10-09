@@ -224,8 +224,28 @@ def assemble_feature_matrix(X_num, ratio_num_idx, ratio_den_idx, cat_labels=None
         out = np.hstack([out, onehot])                            # (N, F+1+K)
     return out
 
-# Step 21 - make_train_val_test (not yet solved)
-# TODO: implement
+# Step 21 - make_train_val_test
+def make_train_val_test(X, y, train_ratio, val_ratio, seed):
+    # TODO: Shuffle and materialize train/validation/test matrices from X and y...
+    X = np.asarray(X)                                  # X: (N, F) features
+    y = np.asarray(y)                                  # y: (N,) targets
+    N = len(X)                                         # N: number of samples
+
+    rng = np.random.RandomState(seed)                  # legacy generator fixed by the seed
+    perm = rng.permutation(N)                          # perm: (N,) shuffled indices (pi)
+
+    n_train = int(train_ratio * N)                      # size of train part
+    n_val = int(val_ratio * N)                          # size of validation part
+
+    tr = perm[:n_train]
+    va = perm[n_train:n_train + n_val]
+    te = perm[n_train + n_val:]                        # remainder
+
+    return {
+        'X_train': X[tr], 'y_train': y[tr],
+        'X_val': X[va],   'y_val': y[va],
+        'X_test': X[te],  'y_test': y[te],
+    }
 
 # Step 22 - standardize_and_add_bias (not yet solved)
 # TODO: implement
