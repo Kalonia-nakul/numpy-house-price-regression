@@ -264,8 +264,27 @@ def standardize_and_add_bias(splits):
 
     return out, mean, safe_std
 
-# Step 23 - evaluate_predictions (not yet solved)
-# TODO: implement
+# Step 23 - evaluate_predictions
+def evaluate_predictions(y_true, y_pred):
+    # TODO: Bundle MAE, RMSE, R^2, and residual summary into one metrics dict.
+    y_true = np.asarray(y_true, dtype=float)          # y_true: (N,) true targets
+    y_pred = np.asarray(y_pred, dtype=float)          # y_pred: (N,) predictions
+    r = y_true - y_pred                               # r: (N,) residuals
+
+    ss_res = np.sum(r ** 2)                           # total squared error
+    ss_tot = np.sum((y_true - y_true.mean()) ** 2)    # total squared spread around the mean
+    r2 = 0.0 if ss_tot == 0 else float(1 - ss_res / ss_tot)
+
+    return {
+        'mae': float(np.mean(np.abs(r))),
+        'rmse': float(np.sqrt(np.mean(r ** 2))),
+        'r2': r2,
+        'residual_summary': {
+            'mean': float(np.mean(r)),
+            'std': float(np.std(r)),
+            'median_abs': float(np.median(np.abs(r))),
+        },
+    }
 
 # Step 24 - house_price_pipeline (not yet solved)
 # TODO: implement
