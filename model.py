@@ -209,8 +209,20 @@ def prepare_cleaned_features(X, iqr_k=1.5):
     # Step 3: clip each column to its own bounds
     return np.clip(X, lower, upper)
 
-# Step 20 - assemble_feature_matrix (not yet solved)
-# TODO: implement
+# Step 20 - assemble_feature_matrix
+import numpy as np
+def assemble_feature_matrix(X_num, ratio_num_idx, ratio_den_idx, cat_labels=None):
+    # TODO: build an extended feature matrix by appending a derived ratio...
+    X = np.asarray(X_num, dtype=float)                            # X: (N, F) numeric features
+    ratio = (X[:, ratio_num_idx] / X[:, ratio_den_idx]).reshape(-1, 1)  # ratio: (N, 1), q_i
+    out = np.hstack([X, ratio])                                   # (N, F+1)
+
+    if cat_labels is not None:
+        labels = np.asarray(cat_labels)                           # labels: (N,) category per sample
+        cats = np.unique(labels)                                  # cats: (K,) sorted distinct labels
+        onehot = (labels[:, None] == cats[None, :]).astype(float) # onehot: (N, K)
+        out = np.hstack([out, onehot])                            # (N, F+1+K)
+    return out
 
 # Step 21 - make_train_val_test (not yet solved)
 # TODO: implement
