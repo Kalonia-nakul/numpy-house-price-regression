@@ -247,8 +247,22 @@ def make_train_val_test(X, y, train_ratio, val_ratio, seed):
         'X_test': X[te],  'y_test': y[te],
     }
 
-# Step 22 - standardize_and_add_bias (not yet solved)
-# TODO: implement
+# Step 22 - standardize_and_add_bias
+def standardize_and_add_bias(splits):
+    # TODO: Fit standardizer on train, transform all splits, prepend bias...
+    X_train = np.asarray(splits['X_train'], dtype=float)   # X_train: (n, F) training features
+    mean = X_train.mean(axis=0)                            # mean: (F,) mu_j, from train only
+    std = X_train.std(axis=0)                              # std: (F,) raw sigma_j (divides by n)
+    safe_std = np.where(std == 0, 1.0, std)                # safe_std: (F,) sigma'_j, 1.0 for constant columns
+
+    out = dict(splits)                                     # copy dict; y_* entries carry over unchanged
+    for name in ('X_train', 'X_val', 'X_test'):
+        X = np.asarray(splits[name], dtype=float)          # X: (m, F) this part's features
+        Z = (X - mean) / safe_std                          # Z: (m, F) standardized with train stats
+        ones = np.ones((Z.shape[0], 1))                    # ones: (m, 1) bias column
+        out[name] = np.hstack([ones, Z])                   # (m, F+1), bias first
+
+    return out, mean, safe_std
 
 # Step 23 - evaluate_predictions (not yet solved)
 # TODO: implement
